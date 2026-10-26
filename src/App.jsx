@@ -1376,47 +1376,66 @@ function Barang({
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
-  const [filterCategory, setFilterCategory] =
-    useState("Semua");
+  const [filterCategory, setFilterCategory] = useState("Semua");
+  const [sortBy, setSortBy] = useState("Default");
 
   const [selectedItem, setSelectedItem] =
     useState(null);
 
   const filteredItems = useMemo(() => {
-    return items.filter((item) => {
-      const keyword = search.toLowerCase();
+  const filtered = items.filter((item) => {
+    const keyword = search.toLowerCase();
 
-      const matchesSearch =
-        item.kode.toLowerCase().includes(keyword) ||
-        item.nama.toLowerCase().includes(keyword) ||
-        item.kategori.toLowerCase().includes(keyword) ||
-        item.lokasi.toLowerCase().includes(keyword);
+    const matchesSearch =
+      item.kode.toLowerCase().includes(keyword) ||
+      item.nama.toLowerCase().includes(keyword) ||
+      item.kategori.toLowerCase().includes(keyword) ||
+      item.lokasi.toLowerCase().includes(keyword);
 
-      const status = getStatus(
-        item.stok,
-        item.minStok
-      ).text;
+    const status = getStatus(
+      item.stok,
+      item.minStok
+    ).text;
 
-      const matchesStatus =
-        filterStatus === "Semua" ||
-        status === filterStatus;
+    const matchesStatus =
+      filterStatus === "Semua" ||
+      status === filterStatus;
 
-      const matchesCategory =
-        filterCategory === "Semua" ||
-        item.kategori === filterCategory;
+    const matchesCategory =
+      filterCategory === "Semua" ||
+      item.kategori === filterCategory;
 
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesCategory
-      );
-    });
-  }, [
-    items,
-    search,
-    filterStatus,
-    filterCategory,
-  ]);
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesCategory
+    );
+  });
+
+  const sorted = [...filtered];
+
+  if (sortBy === "name-asc") {
+    sorted.sort((a, b) =>
+      a.nama.localeCompare(b.nama)
+    );
+  }
+
+  if (sortBy === "stock-desc") {
+    sorted.sort((a, b) => b.stok - a.stok);
+  }
+
+  if (sortBy === "stock-asc") {
+    sorted.sort((a, b) => a.stok - b.stok);
+  }
+
+  return sorted;
+}, [
+  items,
+  search,
+  filterStatus,
+  filterCategory,
+  sortBy,
+]);
 
   const handleDelete = (item) => {
     const confirmed = window.confirm(
@@ -1449,51 +1468,79 @@ function Barang({
         {/* Filter */}
         <div className="filter-area">
 
-          <div className="search-box">
-            <i className="bi bi-search"></i>
+  <div className="search-box">
+    <i className="bi bi-search"></i>
 
-            <input
-              type="text"
-              placeholder="Cari kode, nama, kategori, lokasi..."
-              value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-            />
-          </div>
+    <input
+      type="text"
+      placeholder="Cari kode, nama, kategori, lokasi..."
+      value={search}
+      onChange={(e) =>
+        setSearch(e.target.value)
+      }
+    />
+  </div>
 
-          <select
-            className="form-select filter-select"
-            value={filterCategory}
-            onChange={(e) =>
-              setFilterCategory(e.target.value)
-            }
-          >
-            <option value="Semua">
-              Semua Kategori
-            </option>
+  <select
+    className="form-select filter-select"
+    value={filterCategory}
+    onChange={(e) =>
+      setFilterCategory(e.target.value)
+    }
+  >
+    <option value="Semua">
+      Semua Kategori
+    </option>
 
-            {categories.map((category) => (
-              <option key={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+    {categories.map((category) => (
+      <option key={category}>
+        {category}
+      </option>
+    ))}
+  </select>
 
-          <select
-            className="form-select filter-select"
-            value={filterStatus}
-            onChange={(e) =>
-              setFilterStatus(e.target.value)
-            }
-          >
-            <option>Semua</option>
-            <option>Aman</option>
-            <option>Menipis</option>
-            <option>Habis</option>
-          </select>
+  {/* INI TAMBAHAN EDWARD */}
+  <select
+    className="form-select filter-select"
+    value={sortBy}
+    onChange={(e) =>
+      setSortBy(e.target.value)
+    }
+  >
+    <option value="default">Urutkan Default</option>
+    <option value="name-asc">Nama (A-Z)</option>
+    <option value="stock-desc">Stok (Terbanyak)</option>
+    <option value="stock-asc">Stok (Terkecil)</option>
+  </select>
 
-        </div>
+  {/* Tombol Reset */}
+<button
+  type="button"
+  className="btn btn-outline-secondary"
+  onClick={() => {
+    setSearch("");
+    setFilterCategory("Semua");
+    setFilterStatus("Semua");
+    setSortBy("default");
+  }}
+>
+  <i className="bi bi-arrow-counterclockwise me-2"></i>
+  Reset Filter
+</button>
+
+</div>
+
+        {/* Table */}
+        <select
+  className="form-select filter-select"
+  value={filterStatus}
+  onChange={(e) => setFilterStatus(e.target.value)}
+>
+  <option value="Semua">Semua Status</option>
+  <option value="Aman">Aman</option>
+  <option value="Menipis">Menipis</option>
+  <option value="Habis">Habis</option>
+</select>
 
         {/* Table */}
         <div className="table-responsive">
