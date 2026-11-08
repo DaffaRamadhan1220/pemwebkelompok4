@@ -288,7 +288,7 @@ function Login() {
               </div>
 
               <div className="mb-4">
-                <h4 className="fw-bold mb-1">Selamat Datang 👋</h4>
+                <h4 className="fw-bold mb-1">Selamat Datang </h4>
                 <p className="text-muted mb-0">
                   Masuk sebagai Administrator Gudang
                 </p>
@@ -389,20 +389,7 @@ function Login() {
                     </>
                   )}
                 </button>
-              </form>
-
-              <div className="demo-account mt-4">
-                <div className="fw-semibold small">
-                  <i className="bi bi-info-circle me-1"></i>
-                  Akun Demo
-                </div>
-
-                <small className="text-muted">
-                  Username: <strong>admin</strong>
-                  <br />
-                  Password: <strong>admin123</strong>
-                </small>
-              </div>
+              </form>         
 
               <div className="text-center mt-4">
                 <small className="text-muted">
@@ -873,7 +860,7 @@ function Topbar({
           </h5>
 
           <small className="text-muted">
-            Selamat datang kembali, {admin?.nama || "Admin"} 👋
+            Selamat datang kembali, {admin?.nama || "Admin"} 
           </small>
         </div>
       </div>
